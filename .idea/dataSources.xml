@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="lottery" uuid="6cf53e60-f88a-40af-af74-3b4f9f584726">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\nickq\OneDrive - Newcastle University\CSC2031\Coursework\LotteryWebAppFiles\lottery.db</jdbc-url>
+    </data-source>
+  </component>
+</project>
