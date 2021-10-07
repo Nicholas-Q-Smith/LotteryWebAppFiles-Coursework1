@@ -46,6 +46,7 @@ def register():
         # sends user to login page
         return redirect(url_for('users.login'))
     # if request method is GET or form not valid re-render signup page
+    print("Invalid!")
     return render_template('register.html', form=form)
 
 
