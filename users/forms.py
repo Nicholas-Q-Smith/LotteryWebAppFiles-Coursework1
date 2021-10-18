@@ -27,7 +27,7 @@ class RegisterForm(FlaskForm):
             raise ValidationError("Phone number must be in format of a standard phone number.")
 
     def validate_password(self, password):
-        p = re.compile(r'(?=.*\d)(?=.*[A-Z])')
+        p = re.compile(r'(?=.*\d)(?=.*[A-Z])(?=.*[a-z])')
         if not p.match(self.password.data):
             raise ValidationError("Password must contain at least 1 digit and 1 uppercase letter.")
 
