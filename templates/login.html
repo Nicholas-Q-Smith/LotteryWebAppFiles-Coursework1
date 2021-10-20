@@ -38,12 +38,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                 <div>
-                        {{ form.recaptcha }}
-                        {% for error in form.recaptcha.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
+<!-- Captcha error - to be added in next commit -->
 
                     <div>
                         {{ form.submit(class="button is-info is-centered") }}

@@ -1,6 +1,7 @@
 # IMPORTS
 import socket
 from flask import Flask, render_template
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
 # CONFIG
@@ -32,6 +33,17 @@ if __name__ == "__main__":
     from users.views import users_blueprint
     from admin.views import admin_blueprint
     from lottery.views import lottery_blueprint
+
+    login_manager = LoginManager()
+    login_manager.login_view = 'users.login'
+    login_manager.init_app(app)
+
+    from models import User
+
+
+    @login_manager.user_loader
+    def load_user(id):
+        return User.query.get(int(id))
 
     # register blueprints with app
     app.register_blueprint(users_blueprint)
