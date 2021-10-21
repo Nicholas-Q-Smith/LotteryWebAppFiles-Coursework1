@@ -3,12 +3,14 @@ from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import Required, Email, Length, EqualTo, ValidationError
 
+
 def character_check(form,field):
     excluded_chars = "*?"
     for char in field.data:
         if char in excluded_chars:
             raise ValidationError(
                 f"Character {char} is not allowed")
+
 
 class RegisterForm(FlaskForm):
     email = StringField(validators=[Required(), Email()])
@@ -20,7 +22,6 @@ class RegisterForm(FlaskForm):
     pin_key = StringField(validators=[Required(), Length(min=6, max=6, message='Pin key must be 6 digits long!')])
     submit = SubmitField()
 
-
     def validate_phone_num(self, phone_number):
         p = re.compile(r'\d\d\d\d-\d\d\d-\d\d\d\d')
         if not p.match(self.password.data):
@@ -30,6 +31,7 @@ class RegisterForm(FlaskForm):
         p = re.compile(r'(?=.*\d)(?=.*[A-Z])(?=.*[a-z])')
         if not p.match(self.password.data):
             raise ValidationError("Password must contain at least 1 digit and 1 uppercase letter.")
+
 
 class LoginForm(FlaskForm):
     username = StringField(validators=[Required(), Email()])
