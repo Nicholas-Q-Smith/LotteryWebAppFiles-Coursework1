@@ -1,6 +1,11 @@
+import base64
 from datetime import datetime
+
+from Crypto.Protocol.KDF import scrypt
+from Crypto.Random import get_random_bytes
 from flask_login import UserMixin
 from app import db
+from werkzeug.security import generate_password_hash
 
 
 class User(db.Model, UserMixin):
@@ -35,9 +40,10 @@ class User(db.Model, UserMixin):
         self.firstname = firstname
         self.lastname = lastname
         self.phone = phone
-        self.password = password
+        self.password = generate_password_hash(password)
         self.pin_key = pin_key
-        self.draw_key = None
+        self.draw_key = base64.urlsafe_b64encode(scrypt(password, str(get_random_bytes(32)),
+                                                        32, N=2 ** 14, r=8, p=1))
         self.role = role
         self.registered_on = datetime.now()
         self.last_logged_in = None
