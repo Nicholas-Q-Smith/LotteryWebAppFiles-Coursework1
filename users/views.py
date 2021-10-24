@@ -6,7 +6,7 @@ from datetime import datetime
 
 import pyotp
 from flask import Blueprint, render_template, flash, redirect, url_for, request, session
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.security import check_password_hash
 
 import lottery.views
@@ -56,7 +56,7 @@ def register():
 
 
 # view user login
-@users_blueprint.route('/login')
+@users_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     # code below is to ensure that brute-forcing cannot occur.
@@ -71,7 +71,7 @@ def login():
         # increase login attempts by 1
         session['logins'] += 1
 
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
 
         if not user and check_password_hash(user.password, form.password.data):
             # if no match create appropriate error message based on login attempts
@@ -83,7 +83,7 @@ def login():
                 flash('Please check your login details and try again. 2 login attempts remaining')
             return render_template('login.html', form=form)
 
-        if pyotp.TOTP(user.pinkey).verify(form.otp.data):
+        if pyotp.TOTP(user.pin_key).verify(form.pin_key.data):
 
             # if user is verified then reset all login attempts to 0.
             session['logins'] = 0
@@ -93,23 +93,25 @@ def login():
             user.current_logged_in = datetime.now()
             db.session.add(user)
             db.session.commit()
-
+            print("Success")
         else:
             flash("You have supplied an invalid 2FA token!", "danger")
 
-        return lottery.views.lottery
+        return redirect(url_for('lottery.lottery'))
 
     return render_template('login.html', form=form)
 
 
 # view user profile
 @users_blueprint.route('/profile')
+@login_required
 def profile():
     return render_template('profile.html', name="PLACEHOLDER FOR FIRSTNAME")
 
 
 # view user account
 @users_blueprint.route('/account')
+@login_required
 def account():
     return render_template('account.html',
                            acc_no="PLACEHOLDER FOR USER ID",
@@ -117,3 +119,9 @@ def account():
                            firstname="PLACEHOLDER FOR USER FIRSTNAME",
                            lastname="PLACEHOLDER FOR USER LASTNAME",
                            phone="PLACEHOLDER FOR USER PHONE")
+
+@users_blueprint.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
