@@ -4,7 +4,7 @@ from datetime import datetime
 from Crypto.Protocol.KDF import scrypt
 from Crypto.Random import get_random_bytes
 from cryptography.fernet import Fernet
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from app import db
 from werkzeug.security import generate_password_hash
 
@@ -62,9 +62,9 @@ class Draw(db.Model):
     win = db.Column(db.BOOLEAN, nullable=False)
     round = db.Column(db.Integer, nullable=False, default=0)
 
-    def __init__(self, user_id, draw, win, round):
+    def __init__(self, user_id, draw, win, round, draw_key):
         self.user_id = user_id
-        self.draw = encrypt(draw)
+        self.draw = encrypt(draw, draw_key)
         self.played = False
         self.match = False
         self.win = win

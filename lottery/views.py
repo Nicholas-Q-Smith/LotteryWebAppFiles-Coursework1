@@ -2,10 +2,11 @@
 import logging
 
 from flask import Blueprint, render_template, request, flash
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from app import db
-from models import Draw
+from models import Draw, encrypt, decrypt
+import models
 
 # CONFIG
 lottery_blueprint = Blueprint('lottery', __name__, template_folder='templates')
@@ -14,7 +15,7 @@ lottery_blueprint = Blueprint('lottery', __name__, template_folder='templates')
 # VIEWS
 # view lottery page
 @lottery_blueprint.route('/lottery', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def lottery():
     return render_template('lottery.html')
 
@@ -28,9 +29,10 @@ def add_draw():
     submitted_draw.strip()
 
     # create a new draw with the form data.
-    new_draw = Draw(user_id=1, draw=submitted_draw, win=False, round=0)  # TODO: update user_id [user_id=1 is a placeholder]
+    new_draw = Draw(user_id=1, draw=submitted_draw, win=False, round=0, draw_key=current_user.draw_key)  # TODO: update user_id [user_id=1 is a placeholder]
 
     # add the new draw to the database
+    print(current_user.draw_key)
     db.session.add(new_draw)
     db.session.commit()
 
