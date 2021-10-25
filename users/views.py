@@ -48,8 +48,10 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
+        login.warning('SECURITY - User registration [%s, %s]', form.username.data, request.remote_addr)
+
         # sends user to login page
-        return login()
+        return redirect(url_for('users.login'))
     # if request method is GET or form not valid re-render signup page
     print("Invalid!")
     return render_template('register.html', form=form)
@@ -93,7 +95,11 @@ def login():
             user.current_logged_in = datetime.now()
             db.session.add(user)
             db.session.commit()
-            print("Success")
+
+            logging.warning('SECURITY - Log in [%s, %s, %s]', current_user.id, current_user.email,
+                            request.remote_addr)
+
+
         else:
             flash("You have supplied an invalid 2FA token!", "danger")
 
@@ -123,5 +129,6 @@ def account():
 @users_blueprint.route('/logout')
 @login_required
 def logout():
+    logging.warning('SECURITY - Log out [%s, %s, %s]', current_user.id, current_user.email, request.remote_addr)
     logout_user()
     return redirect(url_for('index'))
