@@ -1,4 +1,5 @@
 # IMPORTS
+import copy
 import logging
 
 from flask import Blueprint, render_template, request, flash
@@ -45,13 +46,20 @@ def add_draw():
 @lottery_blueprint.route('/view_draws', methods=['POST'])
 @login_required
 def view_draws():
-    # get all draws that have not been played [played=0]
     playable_draws = Draw.query.filter_by(played=False).all()  # TODO: filter playable draws for current user
+
+    decrypted_playable_draws = []
+
+    draw_copies = list(map(lambda x: copy.deepcopy(x), playable_draws))
+
+    for d in draw_copies:
+        d.view_draw(current_user.draw_key)
+        decrypted_playable_draws.append(d)
 
     # if playable draws exist
     if len(playable_draws) != 0:
         # re-render lottery page with playable draws
-        return render_template('lottery.html', playable_draws=playable_draws)
+        return render_template('lottery.html', playable_draws=decrypted_playable_draws)
     else:
         flash('No playable draws.')
         return lottery()
@@ -64,9 +72,13 @@ def check_draws():
     # get played draws
     played_draws = Draw.query.filter_by(played=True).all()  # TODO: filter played draws for current user
 
+    decrypted_played_draws = []
+
+    decrypted_played_draws = list(map(lambda x: copy.deepcopy(x), played_draws))
+
     # if played draws exist
     if len(played_draws) != 0:
-        return render_template('lottery.html', results=played_draws, played=True)
+        return render_template('lottery.html', results=decrypted_played_draws, played=True)
 
     # if no played draws exist [all draw entries have been played therefore wait for next lottery round]
     else:

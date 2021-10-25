@@ -4,7 +4,7 @@ from datetime import datetime
 from Crypto.Protocol.KDF import scrypt
 from Crypto.Random import get_random_bytes
 from cryptography.fernet import Fernet
-from flask_login import UserMixin, current_user
+from flask_login import UserMixin
 from app import db
 from werkzeug.security import generate_password_hash
 
@@ -70,6 +70,16 @@ class Draw(db.Model):
         self.win = win
         self.round = round
 
+    def view_draw(self, draw_key):
+        self.draw = decrypt(self.draw, draw_key)
+
+    def update_draw(self, draw, draw_key):
+        encrypted_draws = []
+        for draws in draw:
+            encrypted_draws.append(encrypt(draws, draw_key))
+        self.draw = encrypted_draws
+        db.session.commit
+
 
 def init_db():
     db.drop_all()
@@ -84,6 +94,7 @@ def init_db():
 
     db.session.add(admin)
     db.session.commit()
+
 
 def encrypt(data, postkey):
     return Fernet(postkey).encrypt(bytes(data, 'utf-8'))
