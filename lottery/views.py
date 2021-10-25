@@ -2,6 +2,7 @@
 import copy
 import logging
 
+from cryptography.fernet import InvalidToken
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required, current_user
 
@@ -53,7 +54,11 @@ def view_draws():
     draw_copies = list(map(lambda x: copy.deepcopy(x), playable_draws))
 
     for d in draw_copies:
-        d.view_draw(current_user.draw_key)
+        try:
+            d.view_draw(current_user.draw_key)
+        except InvalidToken:
+            print("Error caught!")
+            break
         decrypted_playable_draws.append(d)
 
     # if playable draws exist
@@ -74,7 +79,15 @@ def check_draws():
 
     decrypted_played_draws = []
 
-    decrypted_played_draws = list(map(lambda x: copy.deepcopy(x), played_draws))
+    copy_played_draws = list(map(lambda x: copy.deepcopy(x), played_draws))
+
+    for d in copy_played_draws:
+        try:
+            d.view_draw(current_user.draw_key)
+        except InvalidToken:
+            print("Error caught!")
+            break
+        decrypted_played_draws.append(d)
 
     # if played draws exist
     if len(played_draws) != 0:

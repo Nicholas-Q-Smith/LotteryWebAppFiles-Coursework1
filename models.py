@@ -81,6 +81,8 @@ class Draw(db.Model):
         db.session.commit
 
 
+
+
 def init_db():
     db.drop_all()
     db.create_all()
