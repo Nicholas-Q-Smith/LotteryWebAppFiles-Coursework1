@@ -99,11 +99,15 @@ def login():
             logging.warning('SECURITY - Log in [%s, %s, %s]', current_user.id, current_user.email,
                             request.remote_addr)
 
+            if current_user.role == 'admin':
+                return redirect(url_for('admin.admin'))
+            else:
+                return redirect(url_for('lottery.lottery'))
 
         else:
             flash("You have supplied an invalid 2FA token!", "danger")
 
-        return redirect(url_for('lottery.lottery'))
+        #return redirect(url_for('lottery.lottery'))
 
     return render_template('login.html', form=form)
 

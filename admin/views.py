@@ -1,5 +1,6 @@
 # IMPORTS
 from flask import Blueprint, render_template, request, flash
+from flask_login import current_user
 from app import db
 from models import User, Draw
 
@@ -11,13 +12,13 @@ admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
 # view admin homepage
 @admin_blueprint.route('/admin')
 def admin():
-    return render_template('admin.html', name="PLACEHOLDER FOR FIRSTNAME")
+    return render_template('admin.html', name=current_user.firstname)
 
 
 # view all registered users
 @admin_blueprint.route('/view_all_users', methods=['POST'])
 def view_all_users():
-    return render_template('admin.html', name="PLACEHOLDER FOR FIRSTNAME",
+    return render_template('admin.html', name=current_user.firstname,
                            current_users=User.query.filter_by(role='user').all())
 
 
