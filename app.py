@@ -40,6 +40,7 @@ def index():
 
 
 if __name__ == "__main__":
+    logging.warning('SECURITY - Lottery Web App Started')
     my_host = "127.0.0.1"
     free_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     free_socket.bind((my_host, 0))
