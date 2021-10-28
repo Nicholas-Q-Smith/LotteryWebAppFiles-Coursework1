@@ -27,6 +27,7 @@
                        <div class="navbar-end">
                             <a href="{{ url_for('index') }}" class="navbar-item">
                                Home
+                            </a>
                             {% if current_user.is_authenticated and current_user.role=='user'%}
                                 <a href="{{ url_for('users.profile') }}" class="navbar-item">
                                     Profile
@@ -57,8 +58,7 @@
                                 </a>
                             {% endif %}
 
-
-                       </div>
+                        </div>
                     </div>
                 </div>
             </nav>
