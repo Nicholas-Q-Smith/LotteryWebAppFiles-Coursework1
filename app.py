@@ -37,7 +37,7 @@ db = SQLAlchemy(app)
 # Security Headers
 
 csp = {'default-src': ['\'self\'', 'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css'],
-       'script-src': ['https://www.google.com/recaptcha/', 'https://www.gstatic.com/recaptcha/'],
+       'script-src': ['\'self\'', '\'unsafe-inline\'', 'https://www.google.com/recaptcha/', 'https://www.gstatic.com/recaptcha/'],
        'frame-src': ['https://www.google.com/recaptcha/', 'https://www.recaptcha.google.com.com/recaptcha/']}
 
 talisman = Talisman(app, content_security_policy=csp)
@@ -66,8 +66,7 @@ def requires_roles(*roles):
 # HOME PAGE VIEW
 @app.route('/')
 def index():
-    print(request.headers)
-    return render_template('index.html', name=current_user.firstname)
+    return render_template('index.html')
 
 
 if __name__ == "__main__":
