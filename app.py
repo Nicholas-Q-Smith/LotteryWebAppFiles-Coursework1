@@ -67,7 +67,7 @@ def requires_roles(*roles):
 @app.route('/')
 def index():
     print(request.headers)
-    return render_template('index.html')
+    return render_template('index.html', name=current_user.firstname)
 
 
 if __name__ == "__main__":

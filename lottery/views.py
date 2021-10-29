@@ -75,7 +75,7 @@ def view_draws():
 @login_required
 def check_draws():
     # get played draws
-    played_draws = Draw.query.filter_by(played=True).all()  # TODO: filter played draws for current user
+    played_draws = Draw.query.filter_by(played=True, user_id=current_user.id).all()
 
     decrypted_played_draws = []
 

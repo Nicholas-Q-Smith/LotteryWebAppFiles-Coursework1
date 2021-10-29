@@ -7,6 +7,11 @@
   CSC2031 Security & Programming Paradigms
 </h2>
 
-{#TODO: ADD NAME AND STUDENT NUMBER#}
-<p>Name ('Student Number')</p>
+{% if current_user.is_authenticated %}
+    <p>User {{ name }} is currently logged in</p>
+{% endif %}
+
+{% if not current_user.is_authenticated %}
+    <p>Welcome! Please login or register using the navigation bar above</p>
+{% endif %}
 {% endblock %}
