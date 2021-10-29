@@ -36,12 +36,10 @@ db = SQLAlchemy(app)
 
 # Security Headers
 
-csp = {
-    'default-src': [
-        '\'self\'',
-        'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css'
-    ],
-}
+csp = {'default-src': ['\'self\'', 'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css'],
+       'script-src': ['https://www.google.com/recaptcha/', 'https://www.gstatic.com/recaptcha/'],
+       'frame-src': ['https://www.google.com/recaptcha/', 'https://www.recaptcha.google.com.com/recaptcha/']}
+
 talisman = Talisman(app, content_security_policy=csp)
 
 # FUNCTIONS

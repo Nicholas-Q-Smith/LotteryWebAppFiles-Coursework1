@@ -107,7 +107,7 @@ def login():
         else:
             flash("You have supplied an invalid 2FA token!", "danger")
 
-        #return redirect(url_for('lottery.lottery'))
+        return redirect(url_for('profile.profile'))
 
     return render_template('login.html', form=form)
 
