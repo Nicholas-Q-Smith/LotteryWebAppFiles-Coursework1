@@ -5,6 +5,7 @@ from functools import wraps
 from flask import Flask, render_template, request
 from flask_login import LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
+from flask_talisman import Talisman
 
 # LOGGING
 
@@ -32,6 +33,16 @@ app.config['RECAPTCHA_PRIVATE_KEY'] = "6LfFdRMcAAAAAILSgmbrJcTLnkDV5fG-xwPzyoR4"
 
 # initialise database
 db = SQLAlchemy(app)
+
+# Security Headers
+
+csp = {
+    'default-src': [
+        '\'self\'',
+        'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css'
+    ],
+}
+talisman = Talisman(app, content_security_policy=csp)
 
 # FUNCTIONS
 def requires_roles(*roles):
