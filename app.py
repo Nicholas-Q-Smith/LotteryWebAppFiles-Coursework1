@@ -13,13 +13,13 @@ class SecurityFilter(logging.Filter):
     def filter(self, record):
         return "SECURITY" in record.getMessage()
 
-fh = logging.FileHandler('CSC2031blog.log', 'w')
+fh = logging.FileHandler('CSC2031blog.log', 'a')
 fh.setLevel(logging.WARNING)
 fh.addFilter(SecurityFilter())
 formatter = logging.Formatter('%(asctime)s : %(message)s', '%m/%d/%Y %I:%M:%S %p')
 fh.setFormatter(formatter)
 
-logger = logging.getLogger('')
+logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.addHandler(fh)
 
