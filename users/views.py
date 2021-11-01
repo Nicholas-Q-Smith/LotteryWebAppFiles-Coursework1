@@ -48,7 +48,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        logging.warning('SECURITY - User registration [%s, %s]', form.username.data, request.remote_addr)
+        #logging.warning('SECURITY - User registration [%s, %s]', form.username.data, request.remote_addr)
 
         # sends user to login page
         return redirect(url_for('users.login'))
