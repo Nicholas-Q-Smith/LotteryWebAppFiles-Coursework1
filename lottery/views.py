@@ -7,7 +7,7 @@ from flask import Blueprint, render_template, request, flash
 from flask_login import login_required, current_user
 
 from app import db
-from models import Draw, encrypt, decrypt
+from models import Draw, encrypt, decrypt, User
 import models
 
 # CONFIG
@@ -31,8 +31,7 @@ def add_draw():
     submitted_draw.strip()
 
     # create a new draw with the form data.
-    new_draw = Draw(user_id=1, draw=submitted_draw, win=False, round=0, draw_key=current_user.draw_key)  # TODO: update user_id [user_id=1 is a placeholder]
-
+    new_draw = Draw(current_user.id, draw=submitted_draw, win=False, round=0, draw_key=current_user.draw_key)
     # add the new draw to the database
     print(current_user.draw_key)
     db.session.add(new_draw)
@@ -54,12 +53,16 @@ def view_draws():
     draw_copies = list(map(lambda x: copy.deepcopy(x), playable_draws))
 
     for d in draw_copies:
-        try:
-            d.view_draw(current_user.draw_key)
-        except InvalidToken:
-            print("Error caught!")
-            break
+        user = User.query.filter_by(id=d.user_id).first()
+        d.view_draw(user.draw_key)
         decrypted_playable_draws.append(d)
+
+        # try:
+        #
+        # except InvalidToken:
+        #     print("Error caught!")
+        #     break
+
 
     # if playable draws exist
     if len(playable_draws) != 0:
