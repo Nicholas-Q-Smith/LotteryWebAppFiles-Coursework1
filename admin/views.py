@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, flash
 from flask_login import current_user, login_required
 from app import db, requires_roles
-from models import User, Draw, decrypt
+from models import User, Draw, decrypt, encrypt
 from cryptography.fernet import InvalidToken
 
 # CONFIG
@@ -103,11 +103,15 @@ def run_lottery():
     # get current unplayed winning draw
     current_winning_draw = Draw.query.filter_by(win=True, played=False).first()
 
+
     # if current unplayed winning draw exists
     if current_winning_draw:
+        # decrypt winning draw
+        decrypted_winning_draw = decrypt(current_winning_draw.draw, postkey=current_user.draw_key)
 
         # get all unplayed user draws
         user_draws = Draw.query.filter_by(win=False, played=False).all()
+
         results = []
 
         # if at least one unplayed user draw exists
@@ -125,7 +129,7 @@ def run_lottery():
                 user = User.query.filter_by(id=draw.user_id).first()
 
                 # if user draw matches current unplayed winning draw
-                if draw.draw == current_winning_draw.draw:
+                if decrypt(draw.draw, user.draw_key) == decrypted_winning_draw:
 
                     # add details of winner to list of results
                     results.append((current_winning_draw.round, draw.draw, draw.user_id, user.email))
