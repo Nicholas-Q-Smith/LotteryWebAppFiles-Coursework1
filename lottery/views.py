@@ -28,12 +28,20 @@ def add_draw():
     submitted_draw = ''
     for i in range(6):
         submitted_draw += request.form.get('no' + str(i + 1)) + ' '
+
+
     submitted_draw.strip()
 
+    current_winning_draw = Draw.query.filter_by(win=True).first()
+    round_number = 0
+
+    if current_winning_draw:
+        round_number = current_winning_draw.round
+
     # create a new draw with the form data.
-    new_draw = Draw(current_user.id, draw=submitted_draw, win=False, round=0, draw_key=current_user.draw_key)
+    new_draw = Draw(user_id=current_user.id, draw=submitted_draw, win=False, round=round_number, draw_key=current_user.draw_key)
+    new_draw.set_played(True)
     # add the new draw to the database
-    print(current_user.draw_key)
     db.session.add(new_draw)
     db.session.commit()
 
@@ -57,12 +65,6 @@ def view_draws():
         d.view_draw(user.draw_key)
         decrypted_playable_draws.append(d)
 
-        # try:
-        #
-        # except InvalidToken:
-        #     print("Error caught!")
-        #     break
-
 
     # if playable draws exist
     if len(playable_draws) != 0:
@@ -75,25 +77,23 @@ def view_draws():
 
 # view lottery results
 @lottery_blueprint.route('/check_draws', methods=['POST'])
-@login_required
 def check_draws():
-    # get played draws
-    played_draws = Draw.query.filter_by(played=True, user_id=current_user.id).all()
 
     decrypted_played_draws = []
 
-    copy_played_draws = list(map(lambda x: copy.deepcopy(x), played_draws))
+    played_draws = Draw.query.filter_by(played=True).all()
+    draw_copies = list(map(lambda x: copy.deepcopy(x), played_draws))
 
-    for d in copy_played_draws:
-        try:
-            d.view_draw(current_user.draw_key)
-        except InvalidToken:
-            print("Error caught!")
-            break
-        decrypted_played_draws.append(d)
+    for d in draw_copies:
+        print('{idx} {played} {win}'.format(idx=d.user_id, played=d.played, win=d.win))
+        user = User.query.filter_by(id=d.user_id).first()
+        d.view_draw(user.draw_key)
+        if(d.user_id == current_user.id):
+            decrypted_played_draws.append(d)
 
     # if played draws exist
-    if len(played_draws) != 0:
+    print(len(decrypted_played_draws))
+    if len(decrypted_played_draws) != 0:
         return render_template('lottery.html', results=decrypted_played_draws, played=True)
 
     # if no played draws exist [all draw entries have been played therefore wait for next lottery round]

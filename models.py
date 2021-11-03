@@ -80,7 +80,8 @@ class Draw(db.Model):
         self.draw = encrypted_draws
         db.session.commit
 
-
+    def set_played(self, was_played):
+        self.played = was_played
 
 
 def init_db():

@@ -16,7 +16,8 @@ from users.forms import RegisterForm, LoginForm
 
 # CONFIG
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
-logger = logging.getLogger('app')
+
+
 
 # VIEWS
 # view registration
