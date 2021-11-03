@@ -13,7 +13,6 @@ import models
 # CONFIG
 lottery_blueprint = Blueprint('lottery', __name__, template_folder='templates')
 
-
 # VIEWS
 # view lottery page
 @lottery_blueprint.route('/lottery', methods=['GET', 'POST'])
@@ -29,7 +28,6 @@ def add_draw():
     for i in range(6):
         submitted_draw += request.form.get('no' + str(i + 1)) + ' '
 
-
     submitted_draw.strip()
 
     current_winning_draw = Draw.query.filter_by(win=True).first()
@@ -40,7 +38,6 @@ def add_draw():
 
     # create a new draw with the form data.
     new_draw = Draw(user_id=current_user.id, draw=submitted_draw, win=False, round=round_number, draw_key=current_user.draw_key)
-    new_draw.set_played(True)
     # add the new draw to the database
     db.session.add(new_draw)
     db.session.commit()
@@ -81,15 +78,13 @@ def check_draws():
 
     decrypted_played_draws = []
 
-    played_draws = Draw.query.filter_by(played=True).all()
+    played_draws = Draw.query.filter_by(played=True, user_id=current_user.id).all()
     draw_copies = list(map(lambda x: copy.deepcopy(x), played_draws))
 
     for d in draw_copies:
         print('{idx} {played} {win}'.format(idx=d.user_id, played=d.played, win=d.win))
-        user = User.query.filter_by(id=d.user_id).first()
-        d.view_draw(user.draw_key)
-        if(d.user_id == current_user.id):
-            decrypted_played_draws.append(d)
+        d.view_draw(current_user.draw_key)
+        decrypted_played_draws.append(d)
 
     # if played draws exist
     print(len(decrypted_played_draws))
@@ -106,7 +101,7 @@ def check_draws():
 @lottery_blueprint.route('/play_again', methods=['POST'])
 @login_required
 def play_again():
-    delete_played = Draw.__table__.delete().where(Draw.played)  # TODO: delete played draws for current user only
+    delete_played = Draw.__table__.delete().where(Draw.played and Draw.user_id == current_user.user_id)
     db.session.execute(delete_played)
     db.session.commit()
 
