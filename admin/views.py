@@ -132,7 +132,7 @@ def run_lottery():
                 if decrypt(draw.draw, user.draw_key) == decrypted_winning_draw:
 
                     # add details of winner to list of results
-                    results.append((current_winning_draw.round, draw.draw, draw.user_id, user.email))
+                    results.append((current_winning_draw.round, decrypt(draw.draw, user.draw_key), draw.user_id, user.email))
 
                     # update draw as a winning draw (this will be used to highlight winning draws in the user's
                     # lottery page)

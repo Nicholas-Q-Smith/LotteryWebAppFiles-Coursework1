@@ -84,6 +84,8 @@ def check_draws():
     for d in draw_copies:
         print('{idx} {played} {win}'.format(idx=d.user_id, played=d.played, win=d.win))
         d.view_draw(current_user.draw_key)
+        if d.match == True:
+            d.win = True
         decrypted_played_draws.append(d)
 
     # if played draws exist
@@ -101,7 +103,7 @@ def check_draws():
 @lottery_blueprint.route('/play_again', methods=['POST'])
 @login_required
 def play_again():
-    delete_played = Draw.__table__.delete().where(Draw.played and Draw.user_id == current_user.user_id)
+    delete_played = Draw.__table__.delete().where(Draw.played and Draw.user_id == current_user.id)
     db.session.execute(delete_played)
     db.session.commit()
 
