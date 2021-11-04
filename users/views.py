@@ -17,10 +17,10 @@ from users.forms import RegisterForm, LoginForm
 # CONFIG
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
-
-
 # VIEWS
 # view registration
+
+
 @users_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     # create signup form object
@@ -31,7 +31,8 @@ def register():
         user = User.query.filter_by(email=form.email.data).first()
         # if this returns a user, then the email already exists in database
 
-        # if email already exists redirect user back to signup page with error message so user can try again
+        # if email already exists redirect user back to signup
+        # page with error message so user can try again
         if user:
             flash('Email address already exists')
             return render_template('register.html', form=form)
@@ -49,7 +50,8 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        #logging.warning('SECURITY - User registration [%s, %s]', form.username.data, request.remote_addr)
+        # log the registration of the new user
+        logging.warning('SECURITY - User registration [%s, %s]', form.username.data, request.remote_addr)
 
         # sends user to login page
         return redirect(url_for('users.login'))
@@ -76,6 +78,7 @@ def login():
 
         user = User.query.filter_by(email=form.email.data).first()
 
+        # checks if user is present and the decrypted password matches the one in the database
         if not user or not check_password_hash(user.password, form.password.data):
             logging.warning('SECURITY - Unauthorised login attempt [%s]', request.remote_addr)
             # if no match create appropriate error message based on login attempts
@@ -98,15 +101,19 @@ def login():
             db.session.add(user)
             db.session.commit()
 
+            # log the specific login with the user's details
             logging.warning('SECURITY - Log in [%s, %s, %s]', current_user.id, current_user.email,
                             request.remote_addr)
 
+            # check whether the current user has an admin or user profile role and redirect them
+            # respectively to either the profile page, or the admin page
             if current_user.role == 'admin':
                 return redirect(url_for('admin.admin'))
             else:
                 return redirect(url_for('users.profile'))
 
         else:
+            # if the 2FA token is wrong, provide an error to the logger and flash a warning
             flash("You have supplied an invalid 2FA token!", "danger")
             logging.warning('SECURITY - Attempted Login with Invalid 2FA token! [%s]', request.remote_addr)
 
@@ -131,9 +138,11 @@ def account():
                            lastname=current_user.lastname,
                            phone=current_user.phone)
 
+# logout user account
 @users_blueprint.route('/logout')
 @login_required
 def logout():
-    logging.warning('SECURITY - Log out [%s, %s, %s]', current_user.id, current_user.email, request.remote_addr)
+    logging.warning('SECURITY - Log out [%s, %s, %s]', current_user.id,
+                    current_user.email, request.remote_addr)
     logout_user()
     return redirect(url_for('index'))
