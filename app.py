@@ -9,6 +9,7 @@ from flask_talisman import Talisman
 
 # LOGGING
 
+
 class SecurityFilter(logging.Filter):
     def filter(self, record):
         return "SECURITY" in record.getMessage()
@@ -38,8 +39,8 @@ db = SQLAlchemy(app)
 
 csp = {'default-src': ['\'self\'', 'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css'],
        'script-src': ['\'self\'', '\'unsafe-inline\'', 'https://www.google.com/recaptcha/',
-                       'https://www.gstatic.com/recaptcha/'],
-        'frame-src': ['https://www.google.com/recaptcha/',
+                      'https://www.gstatic.com/recaptcha/'],
+       'frame-src': ['https://www.google.com/recaptcha/',
                       'https://www.recaptcha.google.com.com/recaptcha/']}
 
 talisman = Talisman(app, content_security_policy=csp)
@@ -89,7 +90,6 @@ if __name__ == "__main__":
     login_manager.init_app(app)
 
     from models import User
-
 
     @login_manager.user_loader
     def load_user(id):
