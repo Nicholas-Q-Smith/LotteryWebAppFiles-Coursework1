@@ -57,6 +57,7 @@ def view_draws():
 
     draw_copies = list(map(lambda x: copy.deepcopy(x), playable_draws))
 
+    # decrypts the playable draws and adds them to an array
     for d in draw_copies:
         user = User.query.filter_by(id=d.user_id).first()
         d.view_draw(user.draw_key)
@@ -81,15 +82,14 @@ def check_draws():
     played_draws = Draw.query.filter_by(played=True, user_id=current_user.id).all()
     draw_copies = list(map(lambda x: copy.deepcopy(x), played_draws))
 
+    # decrypts the played draws and adds them to an array
     for d in draw_copies:
-        print('{idx} {played} {win}'.format(idx=d.user_id, played=d.played, win=d.win))
         d.view_draw(current_user.draw_key)
         if d.match == True:
             d.win = True
         decrypted_played_draws.append(d)
 
     # if played draws exist
-    print(len(decrypted_played_draws))
     if len(decrypted_played_draws) != 0:
         return render_template('lottery.html', results=decrypted_played_draws, played=True)
 
