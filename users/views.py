@@ -76,7 +76,8 @@ def login():
 
         user = User.query.filter_by(email=form.email.data).first()
 
-        if not user and check_password_hash(user.password, form.password.data):
+        if not user or not check_password_hash(user.password, form.password.data):
+            logging.warning('SECURITY - Unauthorised login attempt [%s]', request.remote_addr)
             # if no match create appropriate error message based on login attempts
             if session['logins'] == 3:
                 flash('Number of incorrect logins exceeded')
@@ -107,6 +108,7 @@ def login():
 
         else:
             flash("You have supplied an invalid 2FA token!", "danger")
+            logging.warning('SECURITY - Attempted Login with Invalid 2FA token! [%s]', request.remote_addr)
 
     return render_template('login.html', form=form)
 
