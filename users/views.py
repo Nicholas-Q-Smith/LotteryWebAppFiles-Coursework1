@@ -90,6 +90,7 @@ def login():
                 flash('Please check your login details and try again. 2 login attempts remaining')
             return render_template('login.html', form=form)
 
+        # verifies the 2FA code to ensure login is authorised
         if pyotp.TOTP(user.pin_key).verify(form.pin_key.data):
 
             # if user is verified then reset all login attempts to 0.
@@ -137,6 +138,7 @@ def account():
                            firstname=current_user.firstname,
                            lastname=current_user.lastname,
                            phone=current_user.phone)
+
 
 # logout user account
 @users_blueprint.route('/logout')
