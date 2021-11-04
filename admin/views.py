@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, flash
 from flask_login import current_user, login_required
 from app import db, requires_roles
-from models import User, Draw, decrypt, encrypt
+from models import User, Draw, decrypt
 from cryptography.fernet import InvalidToken
 
 # CONFIG
