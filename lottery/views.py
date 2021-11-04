@@ -1,17 +1,14 @@
 # IMPORTS
 import copy
-import logging
-
-from cryptography.fernet import InvalidToken
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required, current_user
-
 from app import db
-from models import Draw, encrypt, decrypt, User
-import models
+from models import Draw, User
+
 
 # CONFIG
 lottery_blueprint = Blueprint('lottery', __name__, template_folder='templates')
+
 
 # VIEWS
 # view lottery page
@@ -63,7 +60,6 @@ def view_draws():
         d.view_draw(user.draw_key)
         decrypted_playable_draws.append(d)
 
-
     # if playable draws exist
     if len(playable_draws) != 0:
         # re-render lottery page with playable draws
@@ -85,7 +81,7 @@ def check_draws():
     # decrypts the played draws and adds them to an array
     for d in draw_copies:
         d.view_draw(current_user.draw_key)
-        if d.match == True:
+        if d.match:
             d.win = True
         decrypted_played_draws.append(d)
 
