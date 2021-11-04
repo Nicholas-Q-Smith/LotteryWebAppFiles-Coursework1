@@ -1,15 +1,10 @@
 # IMPORTS
 import logging
-from functools import wraps
-
 from datetime import datetime
-
 import pyotp
 from flask import Blueprint, render_template, flash, redirect, url_for, request, session
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.security import check_password_hash
-
-import lottery.views
 from app import db
 from models import User
 from users.forms import RegisterForm, LoginForm
@@ -17,10 +12,9 @@ from users.forms import RegisterForm, LoginForm
 # CONFIG
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
+
 # VIEWS
 # view registration
-
-
 @users_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     # create signup form object
