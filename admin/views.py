@@ -86,7 +86,6 @@ def view_winning_draw():
             decrypted_winning_draw_obj = decrypted_draw_obj
             return render_template('admin.html', winning_draw=decrypted_winning_draw_obj, name=current_user.firstname)
         except InvalidToken:
-            print("Error caught!")
             flash("Winning draw created by another admin draw key!")
 
     # if no winning draw exists, rerender admin page
