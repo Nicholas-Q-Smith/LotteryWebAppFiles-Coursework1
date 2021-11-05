@@ -48,7 +48,7 @@ def add_draw():
 @lottery_blueprint.route('/view_draws', methods=['POST'])
 @login_required
 def view_draws():
-    playable_draws = Draw.query.filter_by(played=False, user_id=current_user.id).all()  # TODO: filter playable draws for current user
+    playable_draws = Draw.query.filter_by(played=False, user_id=current_user.id).all()
 
     decrypted_playable_draws = []
 
